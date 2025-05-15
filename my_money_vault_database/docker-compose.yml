@@ -1,0 +1,8 @@
+services:
+  my_money_vault_database:
+    image: 'mysql:latest'
+    container_name: my_money_vault_database
+    environment:
+      - MYSQL_ROOT_PASSWORD=myverystrongpassword
+    ports:
+      - '4883:3306'
