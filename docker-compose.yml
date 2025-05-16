@@ -4,5 +4,9 @@ services:
     container_name: my_money_vault_database
     environment:
       - MYSQL_ROOT_PASSWORD=myverystrongpassword
+      - HOST_IP=host.docker.internal
     ports:
-      - '4883:3306'
+      - '3306:3306'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
