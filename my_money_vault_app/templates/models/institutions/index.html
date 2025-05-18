@@ -1,0 +1,45 @@
+{% extends "partials/base.html" %}
+
+{% block content %}
+
+<h1 class="title">List institutions</h1>
+
+<div class="container">
+    <h1 class="title is-2 has-text-centered">Entity Information</h1>
+
+    <table class="table is-striped is-hoverable is-fullwidth project-table-style">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for institution in institutions %}
+            <tr>
+                <td>
+                    <div class="td-content">
+                        {{ institution.name }}
+                    </div>
+                </td>
+                <td>
+                    <div class="td-content">
+                        {{ institution.description }}
+                    </div>
+                </td>
+                <td>
+                    <div class="td-content">
+                        <a href="#" class="button is-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

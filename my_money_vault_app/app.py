@@ -10,15 +10,15 @@ app = Flask(__name__)
 app.secret_key = 'your-very-secret-key'
 csrf = CSRFProtect(app)
 
-@app.route("/")
-def hello():
+@app.route("/", endpoint="index", methods=["GET"])
+def index():
     return render_template("index.html")
 
 @app.route("/bulma", endpoint="bulma")
 def bulma():
     return render_template("bulma.html")
 
-@app.route("/institutions/create")
+@app.route("/institutions/create", endpoint="institution_create", methods=["GET"])
 def create_form():
     return render_template("models/institutions/create.html")
 
@@ -35,3 +35,17 @@ def create():
     institution.description = request.form["description"]
     repo.create(institution)
     return redirect(url_for("bulma"))
+
+@app.route("/institutions", endpoint="institution_list", methods=["GET"])
+def list_institutions():
+    repo = InstitutionRepository(MySQLConnectorWrapper().connector)
+    institutions_list = repo.find_all()
+    return render_template("models/institutions/index.html", institutions=institutions_list)
+
+@app.route("/institutions/<int:id>/delete", endpoint="institution_show", methods=["GET"])
+def delete_institution_form(id):
+    repo = InstitutionRepository(MySQLConnectorWrapper().connector)
+    institution = repo.find_by_id(id)
+    if not institution:
+        abort(404, description="Institution not found")
+    return render_template("models/institutions/delete.html", institution=institution)

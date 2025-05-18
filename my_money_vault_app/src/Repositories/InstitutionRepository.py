@@ -51,24 +51,23 @@ class InstitutionRepository(RepositoryInterface):
     
     def find_all(self) -> List[Institution]:
         query = """
-        SELECT id, name, description, created_at, updated_at
+        SELECT id, name, description
         FROM institutions
         """
         try:
             cursor = self.mysql_connector.cursor(dictionary=True)
             cursor.execute(query)
             results = cursor.fetchall()
+            institutions_list = []
+            for row in results:
+                institution = Institution()
+                institution.id = row['id']
+                institution.name = row['name']
+                institution.description = row['description']
+                
+                institutions_list.append(institution)
             
-            return [
-                Institution(
-                    id=row['id'],
-                    name=row['name'],
-                    description=row['description'],
-                    created_at=row['created_at'],
-                    updated_at=row['updated_at']
-                )
-                for row in results
-            ]
+            return institutions_list
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
@@ -113,7 +112,7 @@ class InstitutionRepository(RepositoryInterface):
     
     def find_by_name(self, name: str) -> Optional[Institution]:
         query = """
-        SELECT id, name, description, created_at, updated_at
+        SELECT id, name, description
         FROM institutions
         WHERE name = %s
         """
@@ -126,9 +125,7 @@ class InstitutionRepository(RepositoryInterface):
                 return Institution(
                     id=result['id'],
                     name=result['name'],
-                    description=result['description'],
-                    created_at=result['created_at'],
-                    updated_at=result['updated_at']
+                    description=result['description']
                 )
             return None
         finally:
