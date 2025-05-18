@@ -9,4 +9,12 @@ services:
       - '3306:3306'
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    
+  my_money_vault_app:
+    build:
+      context: docker_configurations
+      dockerfile: AppDockerfile
+    volumes:
+      - ./my_money_vault_app:/app
+    ports:
+      - 5000:5000
+    working_dir: /app
