@@ -11,3 +11,7 @@ def hello():
 @app.route("/bulma")
 def bulma():
     return render_template("bulma.html")
+
+@app.route("/institutions/create")
+def create_institution():
+    return render_template("models/institutions/create.html")
