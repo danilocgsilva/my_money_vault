@@ -1,34 +1,36 @@
 {% extends "partials/base.html" %}
 
 {% block content %}
+
+<h1 class="title">Create New Institution</h1>
+
+<form action="{{ url_for('institution_store') }}" method="POST" class="box">
+
+    <!-- CSRF Token for security -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     
+    <!-- Institution Name Field -->
+    <div class="field">
+        <label class="label">Institution Name</label>
+        <div class="control">
+            <input name="name" class="input" type="text" placeholder="Enter institution name" required>
+        </div>
+    </div>
 
-            <h1 class="title">Create New Institution</h1>
-            
-            <form class="box">
-                <!-- Institution Name Field -->
-                <div class="field">
-                    <label class="label">Institution Name</label>
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Enter institution name" required>
-                    </div>
-                </div>
-                
-                <!-- Description Field -->
-                <div class="field">
-                    <label class="label">Description</label>
-                    <div class="control">
-                        <textarea class="textarea" placeholder="Enter institution description"></textarea>
-                    </div>
-                </div>
-                
-                <!-- Submit Button -->
-                <div class="field">
-                    <div class="control">
-                        <button class="button is-primary" type="submit">Create Institution</button>
-                    </div>
-                </div>
-            </form>
+    <!-- Description Field -->
+    <div class="field">
+        <label class="label">Description</label>
+        <div class="control">
+            <textarea name="description" class="textarea" placeholder="Enter institution description"></textarea>
+        </div>
+    </div>
 
+    <!-- Submit Button -->
+    <div class="field">
+        <div class="control">
+            <button class="button is-primary" type="submit">Create Institution</button>
+        </div>
+    </div>
+</form>
 
 {% endblock %}

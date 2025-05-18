@@ -18,3 +18,9 @@ services:
     ports:
       - 5000:5000
     working_dir: /app
+    environment:
+      - MYSQL_HOST=my_money_vault_database
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=myverystrongpassword
+      - MYSQL_DATABASE=my_money_vault

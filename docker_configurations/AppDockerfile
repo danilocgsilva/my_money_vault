@@ -5,6 +5,8 @@ RUN apt-get upgrade -y
 RUN apt-get install -y \
     python3 \
     python3-pip
-RUN pip3 install flask --break-system-packages
+RUN pip3 install flask --break-system-packages 
+RUN pip3 install mysql-connector-python --break-system-packages
+RUN pip3 install flask-wtf --break-system-packages
 
 CMD ["sh", "-c", "while : ; do sleep 1000; done"]
