@@ -1,6 +1,7 @@
 from typing import List, Optional
 from src.Repositories.RepositoryInterface import RepositoryInterface
 from src.Models.Institution import Institution
+from src.Models.Account import Account
 import mysql.connector
 
 class InstitutionRepository(RepositoryInterface):
@@ -33,21 +34,18 @@ class InstitutionRepository(RepositoryInterface):
         FROM institutions
         WHERE id = %s
         """
-        try:
-            cursor = self.mysql_connector.cursor(dictionary=True)
-            cursor.execute(query, (institution_id,))
-            result = cursor.fetchone()
             
-            if result:
-                return Institution(
-                    id=result['id'],
-                    name=result['name'],
-                    description=result['description']
-                )
-            return None
-        finally:
-            if self.mysql_connector:
-                self.mysql_connector.close()
+        cursor = self.mysql_connector.cursor(dictionary=True)
+        cursor.execute(query, (institution_id,))
+        result = cursor.fetchone()
+        
+        if result:
+            institution = Institution()
+            institution.id = result['id']
+            institution.name = result['name']
+            institution.description = result['description']
+            return institution
+        return None
     
     def find_all(self) -> List[Institution]:
         query = """
@@ -132,3 +130,29 @@ class InstitutionRepository(RepositoryInterface):
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
+                
+    def fill_accounts(self, institution: Institution):
+        query = """
+        SELECT id, institution_id, name
+        FROM accounts
+        WHERE institution_id = %s
+        """
+        try:
+            cursor = self.mysql_connector.cursor(dictionary=True)
+            cursor.execute(query, (institution.id,))
+            results = cursor.fetchall()
+            accounts_list = []
+            for row in results:
+                
+                account = Account()
+                account.id = row['id']
+                account.institution_id = row['institution_id']
+                account.name = row['name']
+                
+                accounts_list.append(account)
+            
+            institution.accounts = accounts_list
+        finally:
+            if self.mysql_connector:
+                self.mysql_connector.close()
+                

@@ -42,9 +42,19 @@ def list_institutions():
     institutions_list = repo.find_all()
     return render_template("models/institutions/index.html", institutions=institutions_list)
 
-@app.route("/institutions/<int:id>/delete", endpoint="institution_show", methods=["GET"])
+@app.route("/institutions/<int:id>", endpoint="institution_show", methods=["GET"])
+def show_institution(id):
+    institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
+    institution = institutions_repository.find_by_id(id)
+    institutions_repository.fill_accounts(institution)
+    if not institution:
+        abort(404, description="Institution not found")
+    return render_template("models/institutions/show.html", institution=institution)
+
+@app.route("/institutions/<int:id>/delete", endpoint="institution_delete_confirmation", methods=["GET"])
 def delete_institution_form(id):
-    repo = InstitutionRepository(MySQLConnectorWrapper().connector)
+    mysql_connector = MySQLConnectorWrapper().connector
+    repo = InstitutionRepository(mysql_connector)
     institution = repo.find_by_id(id)
     if not institution:
         abort(404, description="Institution not found")

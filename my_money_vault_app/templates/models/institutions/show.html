@@ -1,0 +1,33 @@
+{% extends "partials/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="title is-2 has-text-centered">{{ institution.name }}</h1>
+
+    <table class="table is-striped is-hoverable is-fullwidth project-table-style">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for account in institution.accounts %}
+            <tr>
+                <td>
+                    <div class="td-content">
+                        {{ account.name }}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    
+
+</div>
+
+{% endblock %}
