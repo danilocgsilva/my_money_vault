@@ -1,3 +1,6 @@
 table.project-table-style td {
     vertical-align: middle;
 }
+/* table.project-table-style tr {
+    display: flex;
+} */

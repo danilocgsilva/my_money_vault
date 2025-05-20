@@ -1,120 +1,119 @@
 from typing import List, Optional
 from src.Repositories.RepositoryInterface import RepositoryInterface
-from src.Models.Institution import Institution
+from src.Models.Account import Account
 import mysql.connector
 
-class InstitutionRepository(RepositoryInterface):
+class AccountRepository(RepositoryInterface):
     
     def __init__(self, mysql_connector):
         self.mysql_connector = mysql_connector
     
-    def create(self, institution: Institution) -> Institution:
-        institution.validate()
+    def create(self, account: Account) -> Account:
+        account.validate()
         
         query = """
-        INSERT INTO institutions (name, description)
+        INSERT INTO accounts (institution_id, name)
         VALUES (%s, %s)
         """
         try:
             cursor = self.mysql_connector.cursor()
-            cursor.execute(query, (institution.name, institution.description))
+            cursor.execute(query, (account.institution_id, account.name))
             self.mysql_connector.commit()
-            institution.id = cursor.lastrowid
-            return institution
+            account.id = cursor.lastrowid
+            return account
         except mysql.connector.Error as err:
             raise
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
     
-    def find_by_id(self, institution_id: int) -> Optional[Institution]:
+    def find_by_id(self, account_id: int) -> Optional[Account]:
         query = """
-        SELECT id, name, description
-        FROM institutions
+        SELECT id, institution_id, name
+        FROM accounts
         WHERE id = %s
         """
         try:
             cursor = self.mysql_connector.cursor(dictionary=True)
-            cursor.execute(query, (institution_id,))
+            cursor.execute(query, (account_id,))
             result = cursor.fetchone()
             
             if result:
-                return Institution(
+                return Account(
                     id=result['id'],
-                    name=result['name'],
-                    description=result['description']
+                    institution_id=result['institution_id'],
+                    name=result['name']
                 )
             return None
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
-    
-    def find_all(self) -> List[Institution]:
+
+    def find_all(self) -> List[Account]:
         query = """
-        SELECT id, name, description
-        FROM institutions
+        SELECT id, institution_id, name
+        FROM accounts
         """
         try:
             cursor = self.mysql_connector.cursor(dictionary=True)
             cursor.execute(query)
             results = cursor.fetchall()
-            institutions_list = []
+            accounts_list = []
             for row in results:
+                account = Account()
+                account.id = row['id']
+                account.institution_id = row['institution_id']
+                account.name = row['name']
                 
-                institution = Institution()
-                institution.id = row['id']
-                institution.name = row['name']
-                institution.description = row['description']
-                
-                institutions_list.append(institution)
+                accounts_list.append(account)
             
-            return institutions_list
+            return accounts_list
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
     
-    def update(self, institution: Institution) -> Institution:
-        institution.validate()
+    def update(self, account: Account) -> Account:
+        account.validate()
         
         query = """
-        UPDATE institutions
-        SET name = %s, description = %s
+        UPDATE accounts
+        SET institution_id = %s, name = %s
         WHERE id = %s
         """
         try:
             cursor = self.mysql_connector.cursor()
-            cursor.execute(query, (institution.name, institution.description, institution.id))
+            cursor.execute(query, (account.institution_id, account.name, account.id))
             if cursor.rowcount == 0:
-                raise ValueError(f"Institution with id {institution.id} not found")
+                raise ValueError(f"Account with id {account.id} not found")
             self.mysql_connector.commit()
             
-            return self.find_by_id(institution.id)
+            return self.find_by_id(account.id)
         except mysql.connector.Error as err:
             if err.errno == 1062:
-                raise ValueError(f"Institution with name '{institution.name}' already exists") from err
+                raise ValueError(f"Account with name '{account.name}' already exists") from err
             raise
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
     
-    def delete(self, institution_id: int) -> bool:
+    def delete(self, account_id: int) -> bool:
         query = """
-        DELETE FROM institutions
+        DELETE FROM accounts
         WHERE id = %s
         """
         try:
             cursor = self.mysql_connector.cursor()
-            cursor.execute(query, (institution_id,))
+            cursor.execute(query, (account_id,))
             self.mysql_connector.commit()
             return cursor.rowcount > 0
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
     
-    def find_by_name(self, name: str) -> Optional[Institution]:
+    def find_by_name(self, name: str) -> Optional[Account]:
         query = """
-        SELECT id, name, description
-        FROM institutions
+        SELECT id, institution_id, name
+        FROM accounts
         WHERE name = %s
         """
         try:
@@ -123,11 +122,13 @@ class InstitutionRepository(RepositoryInterface):
             result = cursor.fetchone()
             
             if result:
-                return Institution(
-                    id=result['id'],
-                    name=result['name'],
-                    description=result['description']
-                )
+                account = Account()
+                account.id = result['id']
+                account.institution_id = result['institution_id']
+                account.name = result['name']
+                
+                return account
+                
             return None
         finally:
             if self.mysql_connector:
