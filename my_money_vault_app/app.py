@@ -39,7 +39,7 @@ def create():
 @app.route("/institutions", endpoint="institution_list", methods=["GET"])
 def list_institutions():
     repo = InstitutionRepository(MySQLConnectorWrapper().connector)
-    institutions_list = repo.find_all()
+    institutions_list = repo.find_all_with_accounts_counts()
     return render_template("models/institutions/index.html", institutions=institutions_list)
 
 @app.route("/institutions/<int:id>", endpoint="institution_show", methods=["GET"])

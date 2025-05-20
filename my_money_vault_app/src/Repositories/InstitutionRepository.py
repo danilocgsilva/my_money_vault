@@ -70,6 +70,37 @@ class InstitutionRepository(RepositoryInterface):
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
+                
+    def find_all_with_accounts_counts(self) -> List[Institution]:
+        query = """
+        SELECT
+            institutions.id,
+            institutions.name,
+            institutions.description,
+            COUNT(accounts.name) AS accounts_counting
+        FROM institutions
+        LEFT JOIN accounts ON institutions.id = accounts.institution_id
+        GROUP BY institutions.id, institutions.name, institutions.description;
+        """
+        try:
+            cursor = self.mysql_connector.cursor(dictionary=True)
+            cursor.execute(query)
+            results = cursor.fetchall()
+            institutions_list = []
+            for row in results:
+                
+                institution = Institution()
+                institution.id = row['id']
+                institution.name = row['name']
+                institution.description = row['description']
+                institution.accounts_counting = row['accounts_counting']
+                
+                institutions_list.append(institution)
+            
+            return institutions_list
+        finally:
+            if self.mysql_connector:
+                self.mysql_connector.close()
     
     def update(self, institution: Institution) -> Institution:
         institution.validate()
