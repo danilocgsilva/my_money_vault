@@ -1,0 +1,18 @@
+<table class="table is-striped is-hoverable is-fullwidth project-table-style">
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for account in institution.accounts %}
+        <tr>
+            <td>
+                <div class="td-content">
+                    {{ account.name }}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

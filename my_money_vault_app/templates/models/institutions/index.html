@@ -29,8 +29,7 @@
                 </td>
                 <td>
                     <div>
-                        <a href="{{ url_for('institution_show', id=institution.id) }}" class="button">Institutions details</a>
-                        <a href="#" class="button">Accounts ({{ institution.accounts_counting }})</a>
+                        <a href="{{ url_for('institution_show', id=institution.id) }}" class="button">Institutions details ({{ get_counting_accounts(institution.accounts_counting) }})</a>
                         <a href="{{ url_for('institution_delete_confirmation', id=institution.id) }}" class="button is-danger">Delete institutuion</a>
                     </div>
                 </td>
@@ -39,7 +38,6 @@
             
         </tbody>
     </table>
-
 </div>
 
 {% endblock %}

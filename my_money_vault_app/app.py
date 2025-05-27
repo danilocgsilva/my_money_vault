@@ -10,13 +10,22 @@ app = Flask(__name__)
 app.secret_key = 'your-very-secret-key'
 csrf = CSRFProtect(app)
 
+@app.context_processor
+def adding_jinja_methods():
+    def couning_accounts_string(counting: int) -> str:
+        if counting == 0:
+            return "No accounts"
+        elif counting == 1:
+            return "1 account"
+        elif counting > 1:
+            return f"{counting} accounts"
+        else:
+            return "Invalid count"
+    return dict(get_counting_accounts=couning_accounts_string)
+
 @app.route("/", endpoint="index", methods=["GET"])
 def index():
     return render_template("index.html")
-
-@app.route("/bulma", endpoint="bulma")
-def bulma():
-    return render_template("bulma.html")
 
 @app.route("/institutions/create", endpoint="institution_create", methods=["GET"])
 def create_form():
@@ -29,17 +38,17 @@ def create():
     except:
         abort(403, description="CSRF token validation failed")
     
-    repo = InstitutionRepository(MySQLConnectorWrapper().connector)
+    institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
     institution = Institution()
     institution.name = request.form["name"]
     institution.description = request.form["description"]
-    repo.create(institution)
+    institutions_repository.create(institution)
     return redirect(url_for("bulma"))
 
 @app.route("/institutions", endpoint="institution_list", methods=["GET"])
 def list_institutions():
-    repo = InstitutionRepository(MySQLConnectorWrapper().connector)
-    institutions_list = repo.find_all_with_accounts_counts()
+    institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
+    institutions_list = institutions_repository.find_all_with_accounts_counts()
     return render_template("models/institutions/index.html", institutions=institutions_list)
 
 @app.route("/institutions/<int:id>", endpoint="institution_show", methods=["GET"])
@@ -54,8 +63,8 @@ def show_institution(id):
 @app.route("/institutions/<int:id>/delete", endpoint="institution_delete_confirmation", methods=["GET"])
 def delete_institution_form(id):
     mysql_connector = MySQLConnectorWrapper().connector
-    repo = InstitutionRepository(mysql_connector)
-    institution = repo.find_by_id(id)
+    institutions_repository = InstitutionRepository(mysql_connector)
+    institution = institutions_repository.find_by_id(id)
     if not institution:
         abort(404, description="Institution not found")
     return render_template("models/institutions/delete.html", institution=institution)
@@ -68,7 +77,7 @@ def delete_institution(id):
         abort(403, description="CSRF token validation failed")
     
     mysql_connector = MySQLConnectorWrapper().connector
-    repo = InstitutionRepository(mysql_connector)
+    institutions_repository = InstitutionRepository(mysql_connector)
     
-    repo.delete(id)
+    institutions_repository.delete(id)
     return redirect(url_for("institution_list"))
