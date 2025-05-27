@@ -4,4 +4,20 @@
 
 <h1 class="title">Delete</h1>
 
+<p>Are you sure to delete the institution? This operation is undonable.</p>
+<br />
+
+<form action="{{ url_for('institution_delete', id=institution.id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Submit Button -->
+    <div class="field">
+        <div class="control">
+            <button class="button is-danger" type="submit">Yes, delete the institution</button>
+            <a class="button is-primary">Cancel</a>
+        </div>
+    </div>
+
+</form>
+
 {% endblock %}

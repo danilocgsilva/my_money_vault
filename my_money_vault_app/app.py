@@ -59,3 +59,16 @@ def delete_institution_form(id):
     if not institution:
         abort(404, description="Institution not found")
     return render_template("models/institutions/delete.html", institution=institution)
+
+@app.route("/institutions/<int:id>/delete", endpoint="institution_delete", methods=["POST"])
+def delete_institution(id):
+    try:
+        validate_csrf(request.form.get('csrf_token'))
+    except:
+        abort(403, description="CSRF token validation failed")
+    
+    mysql_connector = MySQLConnectorWrapper().connector
+    repo = InstitutionRepository(mysql_connector)
+    
+    repo.delete(id)
+    return redirect(url_for("institution_list"))
