@@ -58,7 +58,6 @@ class InstitutionRepository(RepositoryInterface):
             results = cursor.fetchall()
             institutions_list = []
             for row in results:
-                
                 institution = Institution()
                 institution.id = row['id']
                 institution.name = row['name']
@@ -114,13 +113,11 @@ class InstitutionRepository(RepositoryInterface):
             cursor = self.mysql_connector.cursor()
             cursor.execute(query, (institution.name, institution.description, institution.id))
             if cursor.rowcount == 0:
-                raise ValueError(f"Institution with id {institution.id} not found")
+                raise ValueError(f"Institution with id {institution.id} not found.")
             self.mysql_connector.commit()
             
             return self.find_by_id(institution.id)
         except mysql.connector.Error as err:
-            if err.errno == 1062:
-                raise ValueError(f"Institution with name '{institution.name}' already exists") from err
             raise
         finally:
             if self.mysql_connector:

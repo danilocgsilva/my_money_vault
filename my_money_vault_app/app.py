@@ -1,9 +1,10 @@
 from flask import Flask, redirect, url_for, request, abort
-from flask import Blueprint
 from flask import render_template
 from src.Repositories.InstitutionRepository import InstitutionRepository
+from src.Repositories.StateRepository import StateRepository
 from src.MySQLConnectorWrapper import MySQLConnectorWrapper
 from src.Models.Institution import Institution
+from src.Models.State import State
 from flask_wtf.csrf import CSRFProtect, validate_csrf
 
 app = Flask(__name__)
@@ -108,4 +109,14 @@ def create_state_form(account_id):
     methods=["POST"]
 )
 def store_state(account_id):
-    return render_template("models/accounts/add_state.html")
+    try:
+        validate_csrf(request.form.get('csrf_token'))
+    except:
+        abort(403, description="CSRF token validation failed")
+    state_repository = StateRepository(MySQLConnectorWrapper().connector)
+    state = State()
+    state.account_id = request.form["account_id"]
+    state.balance = request.form["balance"]
+    state.date = request.form["date"]
+    state_repository.create(state)
+    return redirect(url_for("create_state_form"))
