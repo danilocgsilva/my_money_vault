@@ -51,7 +51,11 @@ def list_institutions():
     institutions_list = institutions_repository.find_all_with_accounts_counts()
     return render_template("models/institutions/index.html", institutions=institutions_list)
 
-@app.route("/institutions/<int:id>", endpoint="institution_show", methods=["GET"])
+@app.route(
+    "/institutions/<int:id>", 
+    endpoint="institution_show", 
+    methods=["GET"]
+)
 def show_institution(id):
     institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
     institution = institutions_repository.find_by_id(id)
@@ -60,7 +64,11 @@ def show_institution(id):
         abort(404, description="Institution not found")
     return render_template("models/institutions/show.html", institution=institution)
 
-@app.route("/institutions/<int:id>/delete", endpoint="institution_delete_confirmation", methods=["GET"])
+@app.route(
+    "/institutions/<int:id>/delete", 
+    endpoint="institution_delete_confirmation", 
+    methods=["GET"]
+)
 def delete_institution_form(id):
     mysql_connector = MySQLConnectorWrapper().connector
     institutions_repository = InstitutionRepository(mysql_connector)
@@ -69,7 +77,11 @@ def delete_institution_form(id):
         abort(404, description="Institution not found")
     return render_template("models/institutions/delete.html", institution=institution)
 
-@app.route("/institutions/<int:id>/delete", endpoint="institution_delete", methods=["POST"])
+@app.route(
+    "/institutions/<int:id>/delete", 
+    endpoint="institution_delete", 
+    methods=["POST"]
+)
 def delete_institution(id):
     try:
         validate_csrf(request.form.get('csrf_token'))
@@ -81,3 +93,19 @@ def delete_institution(id):
     
     institutions_repository.delete(id)
     return redirect(url_for("institution_list"))
+
+@app.route(
+    "/institutions/<int:account_id>/state",
+    endpoint="create_state_form",
+    methods=["GET"]
+)
+def create_state_form(account_id):
+    return render_template("models/accounts/add_state.html")
+    
+@app.route(
+    "/instituion/<int:account_id>/state",
+    endpoint="state_store",
+    methods=["POST"]
+)
+def store_state(account_id):
+    return render_template("models/accounts/add_state.html")

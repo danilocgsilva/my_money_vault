@@ -14,7 +14,11 @@
                 </div>
             </td>
             <td>
-                <a href="#" class="button is-primary">Add a state</a>
+                <a
+                    href="{{ url_for('create_state_form', account_id=account.id) }}"
+                    class="button is-primary">
+                    Add a state
+                </a>
             </td>
         </tr>
         {% endfor %}
