@@ -7,6 +7,7 @@ class AccountRepository(RepositoryInterface):
     
     def __init__(self, mysql_connector):
         self.mysql_connector = mysql_connector
+        self.get_institution = False
     
     def create(self, account: Account) -> Account:
         account.validate()
@@ -28,26 +29,51 @@ class AccountRepository(RepositoryInterface):
                 self.mysql_connector.close()
     
     def find_by_id(self, account_id: int) -> Optional[Account]:
-        query = """
-        SELECT id, institution_id, name
-        FROM accounts
-        WHERE id = %s
-        """
-        try:
-            cursor = self.mysql_connector.cursor(dictionary=True)
-            cursor.execute(query, (account_id,))
-            result = cursor.fetchone()
-            
-            if result:
-                return Account(
-                    id=result['id'],
-                    institution_id=result['institution_id'],
-                    name=result['name']
-                )
-            return None
-        finally:
-            if self.mysql_connector:
-                self.mysql_connector.close()
+        
+        if self.get_institution:
+            query = """
+            SELECT
+                a.id as account_id,
+                a.institution_id as account_institution_id,
+                a.name as account_name
+            FROM accounts a
+            LEFT JOIN institutiona i ON i.id = a.institution_id
+            WHERE id = %s
+            """
+            try:
+                cursor = self.mysql_connector.cursor(dictionary=True)
+                cursor.execute(query, (account_id,))
+                result = cursor.fetchone()
+                if result:
+                    account = Account()
+                    
+                    account.id = result['account_id']
+                    account.institution_id = result['account_institution_id']
+                    account.name = result['account_name']
+        else:
+            query = """
+            SELECT
+                id as account_id, 
+                institution_id as account_institution_id, 
+                name as account_name
+            FROM accounts
+            WHERE id = %s
+            """
+            try:
+                cursor = self.mysql_connector.cursor(dictionary=True)
+                cursor.execute(query, (account_id,))
+                result = cursor.fetchone()
+                
+                if result:
+                    account = Account()
+                    account.id = result['account_id']
+                    account.institution_id = result['account_institution_id']
+                    account.name = result['account_name']
+                    return account
+                return None
+            finally:
+                if self.mysql_connector:
+                    self.mysql_connector.close()
 
     def find_all(self) -> List[Account]:
         query = """
@@ -133,3 +159,6 @@ class AccountRepository(RepositoryInterface):
         finally:
             if self.mysql_connector:
                 self.mysql_connector.close()
+                
+    def prepareWithInstitution(self):
+        self.get_institution = True

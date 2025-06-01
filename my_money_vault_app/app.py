@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, request, abort
 from flask import render_template
 from src.Repositories.InstitutionRepository import InstitutionRepository
 from src.Repositories.StateRepository import StateRepository
+from src.Repositories.AccountRepository import AccountRepository
 from src.MySQLConnectorWrapper import MySQLConnectorWrapper
 from src.Models.Institution import Institution
 from src.Models.State import State
@@ -101,14 +102,18 @@ def delete_institution(id):
     methods=["GET"]
 )
 def create_state_form(account_id):
-    return render_template("models/accounts/add_state.html")
+    account_repository = AccountRepository(MySQLConnectorWrapper().connector)
+    account_repository.prepareWithInstitution()
+    account = account_repository.find_by_id(account_id)
+    account.load_institution(MySQLConnectorWrapper().connector)
+    return render_template("models/accounts/add_state.html", account=account)
     
 @app.route(
     "/instituion/<int:account_id>/state",
     endpoint="state_store",
     methods=["POST"]
 )
-def store_state(account_id):
+def store_state():
     try:
         validate_csrf(request.form.get('csrf_token'))
     except:
@@ -117,6 +122,5 @@ def store_state(account_id):
     state = State()
     state.account_id = request.form["account_id"]
     state.balance = request.form["balance"]
-    state.date = request.form["date"]
     state_repository.create(state)
     return redirect(url_for("create_state_form"))

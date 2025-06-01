@@ -5,3 +5,4 @@ class Account:
     
     def validate(self) -> bool:
         return True
+    
