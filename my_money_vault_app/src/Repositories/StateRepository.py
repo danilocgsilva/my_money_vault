@@ -47,7 +47,12 @@ class StateRepository(RepositoryInterface):
             state.date = result['date']
             return state
         return None
-        
+    
+    def find_states_by_account(account_id: int):
+        query = """
+        SELECT 
+        """
+    
     def find_all(self) -> List[State]:
         query = """
         SELECT id, account_id, balance, date

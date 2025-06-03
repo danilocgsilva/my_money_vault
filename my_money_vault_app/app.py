@@ -123,3 +123,13 @@ def store_state():
     state.balance = request.form["balance"]
     state_repository.create(state)
     return redirect(url_for("create_state_form"))
+
+
+@app.rout(
+    "/institution/<int:account_id>/state",
+    endpoint="state_history",
+    method=["GET"]
+)
+def account_state_history():
+    return render_template("models/accounts/state_history.html")
+
