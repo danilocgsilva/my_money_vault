@@ -1,6 +1,7 @@
 from typing import List, Optional
 from src.Repositories.RepositoryInterface import RepositoryInterface
 from src.Models.Account import Account
+from src.Models.Institution import Institution
 import mysql.connector
 
 class AccountRepository(RepositoryInterface):
@@ -29,16 +30,18 @@ class AccountRepository(RepositoryInterface):
                 self.mysql_connector.close()
     
     def find_by_id(self, account_id: int) -> Optional[Account]:
-        
         if self.get_institution:
             query = """
             SELECT
                 a.id as account_id,
                 a.institution_id as account_institution_id,
-                a.name as account_name
+                a.name as account_name,
+                i.id as institution_id,
+                i.name as institution_name,
+                i.description as institution_description
             FROM accounts a
-            LEFT JOIN institutiona i ON i.id = a.institution_id
-            WHERE id = %s
+            LEFT JOIN institutions i ON i.id = a.institution_id
+            WHERE a.id = %s
             """
             try:
                 cursor = self.mysql_connector.cursor(dictionary=True)
@@ -50,6 +53,18 @@ class AccountRepository(RepositoryInterface):
                     account.id = result['account_id']
                     account.institution_id = result['account_institution_id']
                     account.name = result['account_name']
+
+                    institution = Institution()
+                    institution.name = result['institution_name']
+                    institution.description = result['institution_description']
+                    
+                    account.institution = institution
+                    
+                    return account
+                return None
+            finally:
+                if self.mysql_connector:
+                    self.mysql_connector.close()
         else:
             query = """
             SELECT

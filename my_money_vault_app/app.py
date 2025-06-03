@@ -105,7 +105,6 @@ def create_state_form(account_id):
     account_repository = AccountRepository(MySQLConnectorWrapper().connector)
     account_repository.prepareWithInstitution()
     account = account_repository.find_by_id(account_id)
-    account.load_institution(MySQLConnectorWrapper().connector)
     return render_template("models/accounts/add_state.html", account=account)
     
 @app.route(
