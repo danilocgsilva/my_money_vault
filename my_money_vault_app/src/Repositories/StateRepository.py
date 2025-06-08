@@ -48,10 +48,28 @@ class StateRepository(RepositoryInterface):
             return state
         return None
     
-    def find_states_by_account(account_id: int):
+    def find_states_by_account(self, account_id: int):
         query = """
-        SELECT 
+        SELECT id, account_id, balance, date
+        FROM states
+        WHERE account_id = %s
         """
+        try:
+            cursor = self.mysql_connector.cursor(dictionary=True)
+            cursor.execute(query, (account_id, ))
+            results = cursor.fetchall()
+            states_list = []
+            for row in results:
+                state = State()
+                state.id = row['id']
+                state.account_id = row['account_id']
+                state.balance = row['balance']
+                state.date = row['date']
+                states_list.append(state)
+            return states_list
+        finally:
+            if self.mysql_connector:
+                self.mysql_connector.close()
     
     def find_all(self) -> List[State]:
         query = """

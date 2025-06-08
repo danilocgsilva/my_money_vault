@@ -3,3 +3,6 @@ my_money_vault_app/src/__pycache__/*
 my_money_vault_app/src/Models/__pycache__/*
 my_money_vault_app/src/Repositories/__pycache__/*
 dev_assets/*
+my_money_vault_app/tests/__pycache__/*
+my_money_vault_app/tests/src/__pycache__/*
+my_money_vault_app/tests/src/Models/__pycache__/*

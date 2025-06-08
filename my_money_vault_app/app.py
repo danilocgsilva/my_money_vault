@@ -118,18 +118,22 @@ def store_state():
     except:
         abort(403, description="CSRF token validation failed")
     state_repository = StateRepository(MySQLConnectorWrapper().connector)
-    state = State()
-    state.account_id = request.form["account_id"]
-    state.balance = request.form["balance"]
+    state = State(
+        account_id=request.form["account_id"],
+        balance=request.form["balance"]
+    )
     state_repository.create(state)
     return redirect(url_for("create_state_form"))
 
 
-@app.rout(
-    "/institution/<int:account_id>/state",
+@app.route(
+    "/account/<int:account_id>/states",
     endpoint="state_history",
-    method=["GET"]
+    methods=["GET"]
 )
-def account_state_history():
-    return render_template("models/accounts/state_history.html")
+def account_state_history(account_id):
+    state_repository = StateRepository(MySQLConnectorWrapper().connector)
+    account_states = state_repository.find_states_by_account(account_id)
+    
+    return render_template("models/accounts/state_history.html", account_states=account_states)
 
