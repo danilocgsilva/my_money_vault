@@ -4,9 +4,10 @@ from src.Exceptions.ModelDataValidationException import ModelDataValidationExcep
 from typing import List
 from typing import Optional
 import mysql.connector
+from src.MySQLConnectorWrapper import MySQLConnectorWrapper
 
 class StateRepository(RepositoryInterface):
-    def __init__(self, mysql_connector):
+    def __init__(self, mysql_connector: MySQLConnectorWrapper):
         self.mysql_connector = mysql_connector
         
     def create(self, state: State) -> State:

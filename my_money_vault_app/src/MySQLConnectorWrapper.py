@@ -7,22 +7,21 @@ class MySQLConnectorWrapper:
     
     connector: Optional[mysql.connector] = None
     
-    def __init__(self, credentials: Optional[CredentialsBag] = None):
-        if credentials:
+    def __init__(self, credentialsBag: Optional[CredentialsBag] = None):
+        if credentialsBag:
             self.connector = mysql.connector.connect(
-                host=credentials.host,
-                user=credentials.user,
-                password=credentials.password,
-                database=credentials.database,
-                port=credentials.port
+                host=credentialsBag.host,
+                user=credentialsBag.user,
+                password=credentialsBag.password,
+                database=credentialsBag.database,
+                port=credentialsBag.port
             )
         else:
-            self._initialize_from_env()
-            
-        self.connector = mysql.connector.connect(
-            host=os.environ.get("MYSQL_HOST"),
-            user=os.environ.get("MYSQL_USER"),
-            password=os.environ.get("MYSQL_PASSWORD"),
-            database=os.environ.get("MYSQL_DATABASE")
-        )
+            self.connector = mysql.connector.connect(
+                host=os.environ.get("MYSQL_HOST"),
+                user=os.environ.get("MYSQL_USER"),
+                password=os.environ.get("MYSQL_PASSWORD"),
+                database=os.environ.get("MYSQL_DATABASE"),
+                port=int(os.environ.get("MYSQL_PORT", 3306))
+            )
     

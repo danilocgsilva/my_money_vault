@@ -24,3 +24,8 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=myverystrongpassword
       - MYSQL_DATABASE=my_money_vault
+      - MYSQL_HOST_TEST=my_money_vault_database
+      - MYSQL_PORT_TEST=3306
+      - MYSQL_USER_TEST=root
+      - MYSQL_PASSWORD_TEST=myverystrongpassword
+      - MYSQL_DATABASE_TEST=my_money_vault_test
