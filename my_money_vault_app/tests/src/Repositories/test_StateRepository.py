@@ -4,6 +4,8 @@ from src.MySQLConnectorWrapper import MySQLConnectorWrapper
 from src.CredentialsBag import CredentialsBag
 import os
 from tests.helpers.DatabaseHelper import DatabaseHelper
+from decimal import *
+import math
 
 class test_StateRepository(unittest.TestCase):
     
@@ -41,6 +43,16 @@ class test_StateRepository(unittest.TestCase):
         states = state_repository.find_states_by_account(1)
         self.assertEqual(1, len(states))
         
+    def test_check_date_properties(self):
+        self.database_helper.reset_database()
+        self.__create_institutions(id=1, name='Test Institution')
+        self.__create_accounts(id=1, account_id=1, account_name='Test Account')
+        self.__create_states(id=1, account_id=1, balance=223.11, date='2025-03-01 00:00:00')
+        state_repository = StateRepository(self.mysql_connector)
+        states = state_repository.find_all()
+        self.assertEqual('2025-03-01 00:00:00', states[0].date_string)
+        self.assertEqual(math.isclose(223.11, states[0].balance), True)
+        
     def __get_crecential_bag(self) -> CredentialsBag:
         credential_bag = CredentialsBag(
             host=os.environ.get('MYSQL_HOST_TEST'),
@@ -62,4 +74,3 @@ class test_StateRepository(unittest.TestCase):
     def __create_states(self, id, account_id, balance, date):
         query = "INSERT INTO states (id, account_id, balance, date) VALUES ({}, {}, {}, '{}');"
         self.database_helper.write(query.format(id, account_id, balance, date), self.mysql_connector)
-
