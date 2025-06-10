@@ -9,3 +9,4 @@ my_money_vault_app/tests/src/Models/__pycache__/*
 my_money_vault_app/src/Exceptions/__pycache__/*
 my_money_vault_app/tests/helpers/__pycache__/*
 my_money_vault_app/tests/src/Repositories/__pycache__/*
+my_money_vault_app/src/routes/__pycache__/*

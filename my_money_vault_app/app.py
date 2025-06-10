@@ -1,16 +1,15 @@
 from flask import Flask, redirect, url_for, request, abort, render_template
-from src.Repositories.InstitutionRepository import InstitutionRepository
 from src.Repositories.StateRepository import StateRepository
 from src.Repositories.AccountRepository import AccountRepository
 from src.MySQLConnectorWrapper import MySQLConnectorWrapper
-from src.Models.Institution import Institution
 from src.Models.State import State
 from flask_wtf.csrf import CSRFProtect, validate_csrf
-from src.routes.routes import routes
+from src.routes.index_routes import index_routes
+from src.routes.institutions_routes import institutions_routes
+from src.Repositories.InstitutionRepository import InstitutionRepository
 
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-key'
-csrf = CSRFProtect(app)
 
 @app.context_processor
 def adding_jinja_methods():
@@ -25,35 +24,10 @@ def adding_jinja_methods():
             return "Invalid count"
     return dict(get_counting_accounts=couning_accounts_string)
 
-# @app.route("/", endpoint="index", methods=["GET"])
-# def index():
-#     return render_template("index.html")
+csrf = CSRFProtect(app)
 
-app.register_blueprint(routes)
-
-@app.route("/institutions/create", endpoint="institution_create", methods=["GET"])
-def create_form():
-    return render_template("models/institutions/create.html")
-
-@app.route("/institutions", endpoint="institution_store", methods=["POST"])
-def create():
-    try:
-        validate_csrf(request.form.get('csrf_token'))
-    except:
-        abort(403, description="CSRF token validation failed")
-    
-    institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
-    institution = Institution()
-    institution.name = request.form["name"]
-    institution.description = request.form["description"]
-    institutions_repository.create(institution)
-    return redirect(url_for("bulma"))
-
-@app.route("/institutions", endpoint="institution_list", methods=["GET"])
-def list_institutions():
-    institutions_repository = InstitutionRepository(MySQLConnectorWrapper().connector)
-    institutions_list = institutions_repository.find_all_with_accounts_counts()
-    return render_template("models/institutions/index.html", institutions=institutions_list)
+app.register_blueprint(index_routes)
+app.register_blueprint(institutions_routes)
 
 @app.route(
     "/institutions/<int:id>", 
@@ -96,7 +70,7 @@ def delete_institution(id):
     institutions_repository = InstitutionRepository(mysql_connector)
     
     institutions_repository.delete(id)
-    return redirect(url_for("institution_list"))
+    return redirect(url_for("institutions_routes.institution_list"))
 
 @app.route(
     "/institutions/<int:account_id>/state",

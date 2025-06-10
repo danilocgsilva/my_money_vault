@@ -1,7 +1,7 @@
 <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <!-- Logo/brand -->
-    <a class="navbar-item" href="{{ url_for('routes.index') }}">
+    <a class="navbar-item" href="{{ url_for('index_routes.index') }}">
       <strong>My money vault</strong>
     </a>
 
@@ -16,8 +16,8 @@
   <div id="navbarBasic" class="navbar-menu">
     <div class="navbar-start">
       <!-- Left side items -->
-      <a class="navbar-item" href="{{ url_for('institution_create') }}">Create Instituion</a>
-      <a class="navbar-item" href="{{ url_for('institution_list') }}">List institutions</a>
+      <a class="navbar-item" href="{{ url_for('institutions_routes.institution_create') }}">Create Instituion</a>
+      <a class="navbar-item" href="{{ url_for('institutions_routes.institution_list') }}">List institutions</a>
     </div>
   </div>
 </nav>
