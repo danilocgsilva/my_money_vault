@@ -1,5 +1,4 @@
-from flask import Flask, redirect, url_for, request, abort
-from flask import render_template
+from flask import Flask, redirect, url_for, request, abort, render_template
 from src.Repositories.InstitutionRepository import InstitutionRepository
 from src.Repositories.StateRepository import StateRepository
 from src.Repositories.AccountRepository import AccountRepository
@@ -7,6 +6,7 @@ from src.MySQLConnectorWrapper import MySQLConnectorWrapper
 from src.Models.Institution import Institution
 from src.Models.State import State
 from flask_wtf.csrf import CSRFProtect, validate_csrf
+from src.routes.routes import routes
 
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-key'
@@ -25,9 +25,11 @@ def adding_jinja_methods():
             return "Invalid count"
     return dict(get_counting_accounts=couning_accounts_string)
 
-@app.route("/", endpoint="index", methods=["GET"])
-def index():
-    return render_template("index.html")
+# @app.route("/", endpoint="index", methods=["GET"])
+# def index():
+#     return render_template("index.html")
+
+app.register_blueprint(routes)
 
 @app.route("/institutions/create", endpoint="institution_create", methods=["GET"])
 def create_form():
