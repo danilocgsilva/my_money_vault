@@ -7,7 +7,7 @@
 <p>Are you sure to delete the institution? This operation is undonable.</p>
 <br />
 
-<form action="{{ url_for('institution_delete', id=institution.id) }}" method="POST">
+<form action="{{ url_for('institutions_routes.institution_delete', id=institution.id) }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <!-- Submit Button -->
