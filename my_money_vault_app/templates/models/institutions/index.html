@@ -19,7 +19,7 @@
             <tr>
                 <td>
                     <div class="td-content">
-                        {{ institution.name }}
+                        <a href="{{ url_for('institutions_routes.institution_show', id=institution.id) }}">{{ institution.name }}</a>
                     </div>
                 </td>
                 <td>
@@ -29,6 +29,7 @@
                 </td>
                 <td>
                     <div>
+                        <a href="#" class="button is-primary">Create account</a>
                         <a href="{{ url_for('institutions_routes.institution_show', id=institution.id) }}" class="button">Institutions details ({{ get_counting_accounts(institution.accounts_counting) }})</a>
                         <a href="{{ url_for('institutions_routes.institution_delete_confirmation', id=institution.id) }}" class="button is-danger">Delete institutuion</a>
                     </div>
