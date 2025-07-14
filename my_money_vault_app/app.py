@@ -1,7 +1,7 @@
-from flask import Flask, redirect, url_for, request, abort, render_template
+from flask import Flask, render_template
 from src.Repositories.StateRepository import StateRepository
 from src.MySQLConnectorWrapper import MySQLConnectorWrapper
-from flask_wtf.csrf import CSRFProtect, validate_csrf
+from flask_wtf.csrf import CSRFProtect
 from src.routes.index_routes import index_routes
 from src.routes.institutions_routes import institutions_routes
 
@@ -36,4 +36,3 @@ def account_state_history(account_id):
     account_states = state_repository.find_states_by_account(account_id)
     
     return render_template("models/accounts/state_history.html", account_states=account_states)
-
